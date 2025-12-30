@@ -2,8 +2,25 @@
 # Usage: .\setup_database.ps1
 
 $psqlPath = "C:\Program Files\PostgreSQL\18\bin\psql.exe"
-$password = (Get-Content -Path "password.txt" -Raw).Trim()
-$env:PGPASSWORD = $password
+
+# 從 .env 文件讀取密碼
+if (Test-Path ".env") {
+    $envContent = Get-Content ".env"
+    $passwordLine = $envContent | Where-Object { $_ -match "^DB_PASSWORD=" }
+    if ($passwordLine) {
+        $password = ($passwordLine -split "=", 2)[1].Trim()
+        $env:PGPASSWORD = $password
+    }
+    else {
+        Write-Host "錯誤：在 .env 文件中找不到 DB_PASSWORD" -ForegroundColor Red
+        exit 1
+    }
+}
+else {
+    Write-Host "錯誤：找不到 .env 文件！" -ForegroundColor Red
+    Write-Host "請複製 .env.example 為 .env 並設置你的資料庫密碼。" -ForegroundColor Yellow
+    exit 1
+}
 
 $dbName = "accounting_system"
 $dbUser = "postgres"
