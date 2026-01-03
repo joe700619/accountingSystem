@@ -1,4 +1,4 @@
-# 會計系統資料庫設置腳本
+# ERP 系統資料庫設置腳本
 # Usage: .\setup_database.ps1
 
 $psqlPath = "C:\Program Files\PostgreSQL\18\bin\psql.exe"
@@ -22,11 +22,11 @@ else {
     exit 1
 }
 
-$dbName = "accounting_system"
+$dbName = "erp_db"
 $dbUser = "postgres"
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "會計系統資料庫設置" -ForegroundColor Cyan
+Write-Host "ERP 系統資料庫設置" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -87,14 +87,14 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "資料庫設置完成！" -ForegroundColor Green
     Write-Host "========================================" -ForegroundColor Green
     Write-Host ""
-    Write-Host "資料庫名稱: accounting_system" -ForegroundColor Cyan
+    Write-Host "資料庫名稱: erp_db" -ForegroundColor Cyan
     Write-Host "使用者: postgres" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Django settings.py 設定範例:" -ForegroundColor Yellow
     Write-Host "DATABASES = {" -ForegroundColor White
     Write-Host "    'default': {" -ForegroundColor White
     Write-Host "        'ENGINE': 'django.db.backends.postgresql'," -ForegroundColor White
-    Write-Host "        'NAME': 'accounting_system'," -ForegroundColor White
+    Write-Host "        'NAME': 'erp_db'," -ForegroundColor White
     Write-Host "        'USER': 'postgres'," -ForegroundColor White
     Write-Host "        'PASSWORD': '5201314Aa'," -ForegroundColor White
     Write-Host "        'HOST': 'localhost'," -ForegroundColor White

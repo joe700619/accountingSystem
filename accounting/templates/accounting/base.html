@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}會計系統{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <nav class="flex items-center justify-between flex-wrap bg-slate-800 p-6">
+        <div class="flex items-center flex-shrink-0 text-white mr-6">
+            <span class="font-bold text-xl tracking-tight">會計師事務所系統</span>
+        </div>
+
+        <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+            <div class="text-sm lg:flex-grow">
+                <a href="{% url 'dashboard' %}"
+                    class="block mt-4 lg:inline-block lg:mt-0 text-slate-200 hover:text-white mr-4">
+                    儀表板
+                </a>
+                <a href="{% url 'entry_create' %}"
+                    class="block mt-4 lg:inline-block lg:mt-0 text-slate-200 hover:text-white mr-4">
+                    新增傳票
+                </a>
+                <a href="{% url 'general_journal' %}"
+                    class="block mt-4 lg:inline-block lg:mt-0 text-slate-200 hover:text-white mr-4">
+                    日記帳
+                </a>
+                <a href="{% url 'general_ledger' %}"
+                    class="block mt-4 lg:inline-block lg:mt-0 text-slate-200 hover:text-white mr-4">
+                    分類帳
+                </a>
+                <a href="/admin/" class="block mt-4 lg:inline-block lg:mt-0 text-yellow-400 hover:text-white">
+                    管理員後台
+                </a>
+                <a href="{% url 'financial_reports' %}"
+                    class="block mt-4 lg:inline-block lg:mt-0 text-slate-200 hover:text-white mr-4">
+                    會計報表
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-8">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+
+</html>

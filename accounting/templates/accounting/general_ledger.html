@@ -1,0 +1,83 @@
+{% extends 'accounting/base.html' %}
+
+{% block title %}分類帳{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-2xl font-bold mb-6 text-gray-700">分類帳 (General Ledger)</h1>
+
+    <form method="get" class="mb-8 p-4 bg-gray-50 rounded flex gap-4 items-end">
+        <div class="flex-grow">
+            <label class="block text-sm font-bold mb-2">選擇會計科目</label>
+            <select name="account" class="w-full p-2 border rounded">
+                <option value="">-- 請選擇科目 --</option>
+
+                {% for acc in accounts %}
+                {% if selected_account.id == acc.id %}
+                <option value="{{ acc.id }}" selected>
+                    {{ acc.code }} {{ acc.name }}
+                </option>
+
+                {% else %}
+                <option value="{{ acc.id }}">
+                    {{ acc.code }} {{ acc.name }}
+                </option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold">
+            查詢
+        </button>
+    </form>
+
+    {% if selected_account %}
+    <div class="mb-4 text-center">
+        <h2 class="text-xl font-bold">{{ selected_account.code }} {{ selected_account.name }}</h2>
+        <p class="text-gray-500">科目類別: {{ selected_account.get_account_type_display }}</p>
+    </div>
+
+    <table class="w-full border-collapse border border-gray-200">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border p-2 text-left">日期</th>
+                <th class="border p-2 text-left">傳票編號</th>
+                <th class="border p-2 text-left">摘要</th>
+                <th class="border p-2 text-right">借方</th>
+                <th class="border p-2 text-right">貸方</th>
+                <th class="border p-2 text-right bg-yellow-50">餘額</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ledger_items %}
+            <tr class="hover:bg-gray-50">
+                <td class="border p-2">{{ item.entry.date }}</td>
+                <td class="border p-2 text-blue-600">
+                    <a href="/admin/accounting/journalentry/{{ item.entry.id }}/change/" target="_blank">
+                        #{{ item.entry.id }}
+                    </a>
+                </td>
+                <td class="border p-2">
+                    <div class="font-bold">{{ item.entry.description }}</div>
+                    <div class="text-xs text-gray-500">{{ item.description }}</div>
+                </td>
+                <td class="border p-2 text-right text-gray-700">
+                    {% if item.debit > 0 %}{{ item.debit|floatformat:0 }}{% endif %}
+                </td>
+                <td class="border p-2 text-right text-gray-700">
+                    {% if item.credit > 0 %}{{ item.credit|floatformat:0 }}{% endif %}
+                </td>
+                <td class="border p-2 text-right font-bold bg-yellow-50">
+                    {{ item.balance|floatformat:0 }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="p-8 text-center text-gray-500">此區間無交易資料</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

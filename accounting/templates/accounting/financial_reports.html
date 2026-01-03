@@ -1,0 +1,131 @@
+{% extends 'accounting/base.html' %}
+{% load humanize %} {% block title %}財務報表{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+
+    <div class="bg-white p-6 rounded shadow mb-6 print:hidden">
+        <h1 class="text-2xl font-bold mb-4 text-gray-700">財務報表</h1>
+        <form method="get" class="flex gap-4 items-end">
+            <div>
+                <label class="block text-sm font-bold mb-1">起始日期 (損益表用)</label>
+                <input type="date" name="start_date" value="{{ start_date }}" class="border p-2 rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">截止日期 (資產負債表日)</label>
+                <input type="date" name="end_date" value="{{ end_date }}" class="border p-2 rounded">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-bold">
+                產生報表
+            </button>
+            <button type="button" onclick="window.print()"
+                class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">
+                列印 / 存為 PDF
+            </button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <div class="bg-white p-8 rounded shadow border-t-4 border-blue-500">
+            <h2 class="text-xl font-bold text-center mb-1">資產負債表</h2>
+            <p class="text-center text-gray-500 text-sm mb-6">截止日：{{ end_date }}</p>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-blue-600 border-b pb-1 mb-2">資產 (Assets)</h3>
+                {% for item in report.ASSET %}
+                <div class="flex justify-between py-1 border-b border-dashed border-gray-100">
+                    <span>{{ item.code }} {{ item.name }}</span>
+                    <span>{{ item.balance|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+                <div class="flex justify-between py-2 font-bold text-lg mt-2 bg-blue-50 px-2">
+                    <span>資產總計</span>
+                    <span>{{ totals.ASSET|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-red-600 border-b pb-1 mb-2">負債 (Liabilities)</h3>
+                {% for item in report.LIABILITY %}
+                <div class="flex justify-between py-1 border-b border-dashed border-gray-100">
+                    <span>{{ item.code }} {{ item.name }}</span>
+                    <span>{{ item.balance|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+                <div class="flex justify-between py-2 font-bold mt-2 px-2">
+                    <span>負債總計</span>
+                    <span>{{ totals.LIABILITY|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-green-600 border-b pb-1 mb-2">權益 (Equity)</h3>
+                {% for item in report.EQUITY %}
+                <div class="flex justify-between py-1 border-b border-dashed border-gray-100">
+                    <span>{{ item.code }} {{ item.name }}</span>
+                    <span>{{ item.balance|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+
+                <div class="flex justify-between py-1 font-bold text-green-700">
+                    <span>本期損益 (Net Income)</span>
+                    <span>{{ net_income|floatformat:0 }}</span>
+                </div>
+
+                <div class="flex justify-between py-2 font-bold text-lg mt-2 bg-green-50 px-2">
+                    <span>權益總計</span>
+                    <span>{{ total_equity_with_income|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center text-sm text-gray-400">
+                (負債 + 權益 = {{ totals.LIABILITY|add:total_equity_with_income|floatformat:0 }})
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded shadow border-t-4 border-green-500">
+            <h2 class="text-xl font-bold text-center mb-1">損益表</h2>
+            <p class="text-center text-gray-500 text-sm mb-6">期間：{{ start_date }} ~ {{ end_date }}</p>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-blue-600 border-b pb-1 mb-2">收入 (Revenue)</h3>
+                {% for item in report.REVENUE %}
+                <div class="flex justify-between py-1 border-b border-dashed border-gray-100">
+                    <span>{{ item.code }} {{ item.name }}</span>
+                    <span>{{ item.balance|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+                <div class="flex justify-between py-2 font-bold mt-2 px-2">
+                    <span>收入總計</span>
+                    <span>{{ totals.REVENUE|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-red-600 border-b pb-1 mb-2">費用 (Expenses)</h3>
+                {% for item in report.EXPENSE %}
+                <div class="flex justify-between py-1 border-b border-dashed border-gray-100">
+                    <span>{{ item.code }} {{ item.name }}</span>
+                    <span>{{ item.balance|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+                <div class="flex justify-between py-2 font-bold mt-2 px-2">
+                    <span>費用總計</span>
+                    <span>{{ totals.EXPENSE|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t-2 border-gray-800">
+                <div class="flex justify-between py-2 font-bold text-2xl">
+                    <span>本期淨利</span>
+                    <span class="{% if net_income >= 0 %}text-blue-600{% else %}text-red-600{% endif %}">
+                        {{ net_income|floatformat:0 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
